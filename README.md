@@ -1,5 +1,5 @@
 # Molecule Grid Viewer
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://lianghsun-streamlit-mol-grid-viewer-main-hpf1jn.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mol-grid-viewer.streamlit.app/)
 
 *Say goodbye to the native RDKit's [MolsToGridImage](https://www.rdkit.org/docs/source/rdkit.Chem.Draw.html#rdkit.Chem.Draw.MolsToGridImage).* Have you ever used RDKit's built-in grid to display molecules, but when it comes to displaying label contents, it's very troublesome: _you can't segment them, or they may look unattractive._
 
