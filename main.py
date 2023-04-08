@@ -5,7 +5,6 @@ from rdkit.Chem import Draw, PandasTools
 
 st.set_page_config(page_title='Molecule Grid Viewer', page_icon='👀')
 
-@st.cache_data
 def read_sdf(sdf):
     return PandasTools.LoadSDF(sdf)
 
