@@ -2,7 +2,6 @@ import pandas as pd
 import streamlit as st
 from rdkit import Chem
 from rdkit.Chem import Draw, PandasTools
-from rdkit.Chem.Draw import IPythonConsole
 
 st.set_page_config(page_title='Molecule Grid Viewer', page_icon='👀')
 
