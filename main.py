@@ -11,7 +11,7 @@ def read_sdf(sdf):
 # Function to display molecules in a grid format with 5 molecules per row
 def display_molecules(frame):
     num_molecules = frame.__len__()
-    row_size = 5
+    row_size = st.session_state['row_size']
     rows = (num_molecules + row_size - 1) // row_size
 
     for row in range(rows):
@@ -26,21 +26,57 @@ def display_molecules(frame):
 # Main app
 def main():
     st.title("Molecule Grid Viewer")
-
-    uploaded_file = st.file_uploader("Upload an SDF file", type="sdf")
-
-    if uploaded_file:
-        frame = read_sdf(uploaded_file)
-        
-        st.multiselect(
-            label='Select which properties you would like to display.',
-            options=frame.columns,
-            default='SMILES',
-            key='props'
+    
+    with st.expander('🤔 __What\'s this for?__'):
+        st.markdown("Have you ever used RDKit's `MolsToGridImage()` function to draw molecular structures and tried to label relevant information underneath each molecule, like the example image below?")
+        example_sms = pd.DataFrame(
+            {
+                'SMILES': ['O=C1NOC[C@@H]1/N=C/c1ccc(/C=N/[C@@H]2CONC2=O)cc1','CCO[C@H]1[C@@H](O)[C@H](CO)O[C@@H]1n1cnc2c(NC)nc(C)nc21','Cc1cc[n+]([O-])c(CS(=O)(=O)c2nnnn2-c2ccccc2)c1'],
+                'MW': [302.29,323.353,331.357]
+            }
         )
+        PandasTools.AddMoleculeColumnToFrame(example_sms, 'SMILES')
+        grid_image = Chem.Draw.MolsToGridImage(
+            example_sms['ROMol'].to_list(),
+            legends=[f"SMILES: {row['SMILES']}, MW: {row['MW']}" for idx, row in example_sms[['SMILES', 'MW']].iterrows()],
+            molsPerRow=3)
+        st.image(grid_image, use_column_width=True)
+        st.markdown("_Doesn't this matter seem a bit off, right?_ Labels and such are all **crammed together 💥**, making it hard to read.")
         
-        if st.button(f'Display __{frame.__len__()}__ mols'):
-            display_molecules(frame)
+    st.radio(
+        label='See how this works',
+        options=['Example molecules', 'Upload your SDF'],
+        horizontal=True,
+        key='method'
+    )
+    
+    if st.session_state['method'] == 'Example molecules':         
+        st.multiselect(
+                label='Select which properties you would like to display.',
+                options=example_sms.columns,
+                default='SMILES',
+                key='props'
+        )
+        st.number_input("Number of molecules per row", min_value=3, max_value=5, value=3, step=1, key='row_size')
+        display_molecules(example_sms)
+        
+    elif st.session_state['method'] == 'Upload your SDF':
+        uploaded_file = st.file_uploader("Upload an SDF file", type="sdf")
+
+        if uploaded_file:
+            frame = read_sdf(uploaded_file)
+
+            st.multiselect(
+                label='Select which properties you would like to display.',
+                options=frame.columns,
+                default='SMILES',
+                key='props'
+            )
+            
+            st.number_input("Number of molecules per row", min_value=3, max_value=5, value=5, step=1, key='row_size')
+
+            if st.button(f'Display __{frame.__len__()}__ mols'):
+                display_molecules(frame)
 
 if __name__ == "__main__":
     main()
